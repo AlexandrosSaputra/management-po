@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +21,7 @@ class SessionController extends Controller
     public function store(Request $request)
     {
         return response()->json([
-            'message' => 'Token-based login is deprecated. Please migrate to local username/password authentication.'
+            'message' => 'Token-based login is deprecated. Please use the local username/email and password login.'
         ], Response::HTTP_GONE);
     }
 

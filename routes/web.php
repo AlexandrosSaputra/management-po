@@ -14,52 +14,58 @@ use App\Http\Controllers\PDFController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\PreOrderController;
 use App\Http\Controllers\SatuanController;
-use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SuplierController;
 use App\Http\Controllers\TemplateOrderController;
 use App\Http\Controllers\TipePembayaranController;
-use App\Models\User;
+use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/login', [LoginController::class, 'showLoginForm'])
+    ->middleware('guest')
+    ->name('login');
 
-Route::get('/', function () {
-    if (Auth::user()) {
-        if (Auth::user()->level == 'admin') {
-            return redirect('/master-user');
-        } elseif (Auth::user()->level == 'pembayaran') {
-            return redirect('/pembayaran');
-        } else {
-            return redirect('/preorder');
-        }
-    } else {
-        return redirect('https://erp.itnh.systems/login.php');
-        // return redirect('/login');
-    }
-})->name('login');
+Route::post('/login', [LoginController::class, 'login'])
+    ->middleware(['guest', 'throttle:login'])
+    ->name('login.attempt');
 
-Route::get('/konfirmasi', function () {
-    return view('konfirmasi');
-});
-
-// route sementara
-Route::get('/stok', function () {
-    return abort(403, 'Fitur masih dikembangkan');
-});
-
-Route::get('/dashboard', function () {
-    return abort(403, 'Fitur masih dikembangkan');
-});
-
-//akses with token
-// Gudang routes
-Route::get('/gudang/list-order', [GudangController::class, 'orderIndex']);
-
-// Suplier routes
-Route::get('/suplier/list-order', [SuplierController::class, 'orderIndex']);
-Route::get('/suplier/list-preorder', [SuplierController::class, 'preorderIndex']);
+Route::post('/logout', [LoginController::class, 'logout'])
+    ->middleware('auth')
+    ->name('logout');
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/', function () {
+        if (Auth::user()->level == 'admin') {
+            return redirect('/master-user');
+        }
+
+        if (Auth::user()->level == 'pembayaran') {
+            return redirect('/pembayaran');
+        }
+
+        return redirect('/preorder');
+    })->name('home');
+
+    Route::get('/konfirmasi', function () {
+        return view('konfirmasi');
+    });
+
+    // route sementara
+    Route::get('/stok', function () {
+        return abort(403, 'Fitur masih dikembangkan');
+    });
+
+    Route::get('/dashboard', function () {
+        return abort(403, 'Fitur masih dikembangkan');
+    });
+
+    // Gudang routes
+    Route::get('/gudang/list-order', [GudangController::class, 'orderIndex']);
+
+    // Suplier routes
+    Route::get('/suplier/list-order', [SuplierController::class, 'orderIndex']);
+    Route::get('/suplier/list-preorder', [SuplierController::class, 'preorderIndex']);
+
     // Pre Order routes
     Route::get('/preorder', [PreOrderController::class, 'index']);
     Route::get('/preorder/create', [PreOrderController::class, 'create']);
@@ -69,18 +75,40 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/preorder/kirimWA/{preorder}', [PreOrderController::class, 'kirimSuplier']);
     Route::delete('/preorder/{preorder}', [PreOrderController::class, 'destroy']);
     Route::delete('/preorder/cancel/{preorder}', [PreOrderController::class, 'cancel']);
+    Route::get('/preorder/notif-suplier', [PreOrderController::class, 'notifSuplier']);
+    Route::get('/preorder/{preorder}', [PreOrderController::class, 'show']);
+    Route::patch('/preorder/{preorder}', [PreOrderController::class, 'update']);
+    Route::patch('/preorder/terima/{preorder}', [PreOrderController::class, 'updateTerima']);
 
     // ItemPenawaran routes
     Route::post('/item-penawaran/create-from-template/{templateorder}', [ItemPenawaranController::class, 'storeFromTemplate']);
     Route::post('/item-penawaran/create-from-harga/{harga}', [ItemPenawaranController::class, 'storeFromHarga']);
+    Route::get('/item-penawaran', [ItemPenawaranController::class, 'index']);
+    Route::get('/item-penawaran/delete/{itemPenawaran}', [ItemPenawaranController::class, 'destroy'])->name('item-penawaran.delete');
+    Route::patch('/item-penawaran/{itemPenawaran}', [ItemPenawaranController::class, 'update']);
+    Route::patch('/item-penawaran/bukti-gudang/{itemPenawaran}', [ItemPenawaranController::class, 'updateBuktiGudang']);
+    Route::delete('/item-penawaran/delete/{itemPenawaran}', [ItemPenawaranController::class, 'destroy'])->name('item-penawaran.delete');
 
-    // Order Routes
+    // Order routes
     Route::get('/order', [OrderController::class, 'index']);
     Route::get('/order/create', [OrderController::class, 'create']);
     Route::post('/order/dp/{order}', [OrderController::class, 'postDP']);
     Route::patch('/order/cancelOrderTerkirirm/{order}', [OrderController::class, 'cancelOrderTerkirim']);
     Route::delete('/order/{order}', [OrderController::class, 'destroy']);
     Route::post('/order/kirimSuplier/{order}', [OrderController::class, 'kirimSuplier']);
+    Route::get('/order/notif-suplier', [OrderController::class, 'notifSuplier']);
+    Route::get('/order/notif-gudang', [OrderController::class, 'notifGudang']);
+    Route::get('/order/grab-spreadsheet', [OrderController::class, 'grabSpreadsheetKPI']);
+    Route::get('/order/{order}', [OrderController::class, 'show']);
+    Route::get('/order/kirimWAGudang/{order}', [OrderController::class, 'kirimWAGudang']);
+    Route::get('/order/kirimWASuplier/{order}', [OrderController::class, 'kirimWASuplier']);
+    Route::get('/order/suplier/{order}', [OrderController::class, 'showOrderSuplier']);
+    Route::get('/order/gudang/{order}', [OrderController::class, 'showOrderGudang']);
+    Route::post('/order', [OrderController::class, 'store']);
+    Route::post('/order/kontrakstore/{harga}', [OrderController::class, 'kontrakStore']);
+    Route::post('/order/fromTemplate/{templateorder}', [OrderController::class, 'fromTemplateStore']);
+    Route::patch('/order/{order}', [OrderController::class, 'update']);
+    Route::patch('/order/revisi/{order}', [OrderController::class, 'revisi']);
 
     // Pembayaran routes
     Route::get('/pembayaran', [PembayaranController::class, 'index']);
@@ -89,6 +117,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/pembayaran', [PembayaranController::class, 'store']);
     Route::post('/pembayaran/pendanaan', [PembayaranController::class, 'postPendanaan']);
     Route::delete('/pembayaran/{pembayaran}', [PembayaranController::class, 'destroy']);
+    Route::get('/pembayaran/{pembayaran}', [PembayaranController::class, 'show']);
+    Route::patch('/pembayaran/{pembayaran}', [PembayaranController::class, 'update']);
 
     // Master user routes
     Route::get('/master-user', [MasterUserController::class, 'index']);
@@ -140,7 +170,6 @@ Route::middleware(['auth'])->group(function () {
 
     // Kontrak (non po) routes
     Route::get('/nonpo', [KontrakController::class, 'index']);
-    //// Route::get('/nonpo/create', [KontrakController::class, 'create']);
     Route::get('/nonpo/{kontrak}', [KontrakController::class, 'show']);
     Route::post('/nonpo/{templateorder}', [KontrakController::class, 'store']);
     Route::patch('/nonpo/{kontrak}', [KontrakController::class, 'update']);
@@ -167,8 +196,7 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/harga/metaupdate/{harga}', [HargaController::class, 'metaUpdate']);
     Route::delete('/harga/{harga}', [HargaController::class, 'destroy']);
 
-    // Master suplier routes
-    Route::get('/item-penawaran', [ItemPenawaranController::class, 'index']);
+    // Tipe pembayaran routes
     Route::patch('/tipe-pembayaran/{tipePembayaran}', [TipePembayaranController::class, 'update']);
     Route::get('/tipe-pembayaran', [TipePembayaranController::class, 'index']);
     Route::get('/tipe-pembayaran/create', [TipePembayaranController::class, 'create']);
@@ -179,53 +207,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/arsip', [ArsipPembayaranController::class, 'index']);
     Route::get('/arsip/{arsip}', [ArsipPembayaranController::class, 'show']);
     Route::post('/arsip/{pembayaran}', [ArsipPembayaranController::class, 'store']);
+
+    // PDF generator routes
+    Route::get('/order-pdf/{order}', [PDFController::class, 'orderPDF']);
+    Route::get('/pembayaran-pdf/{pembayaran}', [PDFController::class, 'pembayaranPDF']);
+    Route::get('/preview-pdf', function () {
+        return view('pdf.preorder-pdf');
+    });
 });
-
-// Pre Order routes
-Route::get('/preorder/notif-suplier', [PreOrderController::class, 'notifSuplier']);
-Route::get('/preorder/{preorder}', [PreOrderController::class, 'show']);
-Route::patch('/preorder/{preorder}', [PreOrderController::class, 'update']);
-Route::patch('/preorder/terima/{preorder}', [PreOrderController::class, 'updateTerima']);
-
-// Order routes
-Route::get('/order/notif-suplier', [OrderController::class, 'notifSuplier']);
-Route::get('/order/notif-gudang', [OrderController::class, 'notifGudang']);
-Route::get('/order/grab-spreadsheet', [OrderController::class, 'grabSpreadsheetKPI']);
-Route::get('/order/{order}', [OrderController::class, 'show']);
-Route::get('/order/kirimWAGudang/{order}', [OrderController::class, 'kirimWAGudang']);
-Route::get('/order/kirimWASuplier/{order}', [OrderController::class, 'kirimWASuplier']);
-Route::get('/order/suplier/{order}', [OrderController::class, 'showOrderSuplier']);
-Route::get('/order/gudang/{order}', [OrderController::class, 'showOrderGudang']);
-Route::post('/order', [OrderController::class, 'store']);
-Route::post('/order/kontrakstore/{harga}', [OrderController::class, 'kontrakStore']);
-Route::post('/order/fromTemplate/{templateorder}', [OrderController::class, 'fromTemplateStore']);
-Route::patch('/order/{order}', [OrderController::class, 'update']);
-Route::patch('/order/revisi/{order}', [OrderController::class, 'revisi']);
-
-// Pembayaran routes
-Route::get('/pembayaran/{pembayaran}', [PembayaranController::class, 'show']);
-Route::patch('/pembayaran/{pembayaran}', [PembayaranController::class, 'update']);
-
-// ItemPenawaran routes
-Route::get('/item-penawaran/delete/{itemPenawaran}', [ItemPenawaranController::class, 'destroy'])->name('item-penawaran.delete');
-Route::patch('/item-penawaran/{itemPenawaran}', [ItemPenawaranController::class, 'update']);
-Route::patch('/item-penawaran/bukti-gudang/{itemPenawaran}', [ItemPenawaranController::class, 'updateBuktiGudang']);
-Route::delete('/item-penawaran/delete/{itemPenawaran}', [ItemPenawaranController::class, 'destroy'])->name('item-penawaran.delete');
-
-
-// Auth routes
-// Route::get('/login', [SessionController::class, 'create'])->middleware('guest'); // local only
-Route::get('/login', function () {
-    return redirect('https://erp.itnh.systems/login.php');
-})->name('login');
-Route::post('/', [SessionController::class, 'store']);
-Route::post('/login', [SessionController::class, 'store']);
-Route::delete('/logout', [SessionController::class, 'destroy'])->middleware('auth');
-
-// PDF generator routes
-Route::get('/order-pdf/{order}', [PDFController::class, 'orderPDF']);
-Route::get('/pembayaran-pdf/{pembayaran}', [PDFController::class, 'pembayaranPDF']);
-Route::get('/preview-pdf', function () {
-    return view('pdf.preorder-pdf');
-});
-// Route::get('/preview-pdf', [PDFController::class, 'previewPDF']);

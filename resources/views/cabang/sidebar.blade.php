@@ -4,7 +4,7 @@
     tabindex="-1" aria-labelledby="drawer-navigation-label">
 
     <div class="flex items-center">
-        <a href="https://erp.itnh.systems"
+        <a href="{{ url('/') }}"
             class="flex gap-x-2 p-2 justify-center items-center focus:ring-2 focus:ring-gray-300 rounded-lg font-bold text-white group">
             <img class="w-[50px] bg-white p-2 rounded-lg group-hover:bg-gray-300" src="{{ asset('images/nhlogo.png') }}"
                 alt="Logo">

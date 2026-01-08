@@ -18,7 +18,7 @@
                 </div>
             @endauth
 
-            <a href="https://erp.itnh.systems"
+            <a href="{{ url('/') }}"
                 class="flex gap-x-2 p-2 justify-center items-center focus:ring-2 focus:ring-gray-300 rounded-lg font-bold text-white group">
                 <img class="w-[50px] bg-white p-2 rounded-lg group-hover:bg-gray-300"
                     src="{{ asset('images/nhlogo.png') }}" alt="Logo">
@@ -30,7 +30,7 @@
         <div class="flex items-center md:order-2 gap-2 rtl:space-x-reverse">
 
             @guest
-                <a href="https://erp.itnh.systems"
+                <a href="{{ route('login') }}"
                     class="block py-2 px-3 text-white hover:text-gray-300 font-semibold rounded hover:bg-gray-100 md:hover:bg-transparent md:p-0">Login</a>
             @endguest
 
@@ -55,7 +55,7 @@
 
                     <ul class="py-2" aria-labelledby="user-menu-button">
                         <li>
-                            <form action="/logout" id="logout" method="POST" class="w-full">@csrf @method('DELETE')
+                            <form action="{{ route('logout') }}" id="logout" method="POST" class="w-full">@csrf
                                 <button type="submit"
                                     class="w-full text-start block px-4 py-2 text-sm text-gray-700 hover:bg-gray-300">Sign
                                     out</button>
