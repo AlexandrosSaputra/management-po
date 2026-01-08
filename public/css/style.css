@@ -1,0 +1,99 @@
+/* Mengatur style untuk navbar */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0px 60px 0px 60px;
+}
+
+/* Mengatur tampilan umum container */
+.po-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+/* Header untuk logo dan judul */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.header .logo img {
+    width: 50px;
+    margin-right: 10px;
+}
+
+.header span {
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+}
+
+/* Judul PO */
+.po-title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 20px;
+    color: #333;
+}
+
+/* Supplier name */
+.supplier-name {
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Styling untuk tabel */
+.po-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.po-table th {
+    background-color: #2C3E50;
+    color: white;
+    padding: 12px 15px;
+    font-weight: bold;
+    text-align: left;
+}
+
+.po-table td {
+    padding: 12px 15px;
+    background-color: #f0f0f0;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+}
+
+.po-table tbody tr:hover {
+    background-color: #e0e0e0;
+}
+
+/* Total harga */
+.total {
+    font-size: 20px;
+    text-align: right;
+    margin-top: 20px;
+}
+
+/* Tanda tangan admin */
+.sign-off {
+    margin-top: 50px;
+    text-align: right;
+}
+
+.sign-off-name {
+    font-weight: bold;
+    text-align: right;
+}
+
+.footer .total-harga {
+   margin-right: 20px;
+}
