@@ -72,7 +72,6 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
-        'id_token',
         'status',
         'telepon',
         'id_cabang',

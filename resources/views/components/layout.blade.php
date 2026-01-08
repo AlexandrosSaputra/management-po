@@ -108,9 +108,40 @@
             border-radius: 10px;
         }
     </style>
+
+    {{-- sweetalert2 --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        .swal2-popup .swal2-confirm-btn {
+            background-color: #099AA7 !important;
+            color: #ffffff !important;
+            border: 1px solid #099AA7 !important;
+        }
+
+        .swal2-popup .swal2-confirm-btn:hover {
+            background-color: #087f8a !important;
+            border-color: #087f8a !important;
+        }
+
+        .swal2-popup .swal2-cancel-btn {
+            background-color: #e5e7eb !important;
+            color: #374151 !important;
+            border: 1px solid #d1d5db !important;
+        }
+
+        .swal2-popup .swal2-cancel-btn:hover {
+            background-color: #d1d5db !important;
+            color: #1f2937 !important;
+        }
+
+        .swal2-popup .swal2-confirm-btn:focus,
+        .swal2-popup .swal2-cancel-btn:focus {
+            box-shadow: 0 0 0 3px rgba(9, 154, 167, 0.25) !important;
+        }
+    </style>
 </head>
 
-<body class="h-screen bg-white">
+<body class="h-80 bg-white">
     @auth
         @include('components.sidebar')
     @endauth
@@ -151,5 +182,8 @@
 
 {{-- select2 cdn --}}
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+{{-- sweetalert2 --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </html>

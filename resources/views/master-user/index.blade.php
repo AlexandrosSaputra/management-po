@@ -37,9 +37,6 @@
                             ID
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            ID Token
-                        </th>
-                        <th scope="col" class="px-6 py-3">
                             Nama
                         </th>
                         <th scope="col" class="px-6 py-3">
@@ -80,9 +77,6 @@
                                     {{ $user->id }}
                                 </th>
                                 <td class="px-6 py-4">
-                                    {{ $user->id_token }}
-                                </td>
-                                <td class="px-6 py-4">
                                     {{ Str::ucfirst($user->nama) }}
                                 </td>
                                 <td class="px-6 py-4">
@@ -104,9 +98,6 @@
                                 <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
                                     {{ $user->id }}
                                 </th>
-                                <td class="px-6 py-4">
-                                    {{ $user->id_token }}
-                                </td>
                                 <td class="px-6 py-4">
                                     {{ Str::ucfirst($user->nama) }}
                                 </td>

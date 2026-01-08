@@ -33,7 +33,6 @@ class UserFactory extends Factory
         // ];
 
         return [
-            'id_token' => rand(1, 99),
             'id_cabang' => rand(1, 99),
             'nama' => fake('id_ID')->name(),
             'status' => true,

@@ -57,7 +57,6 @@ class MasterUserController extends Controller
             $validated = $request->validate([
                 'nama' => 'required|string',
                 'telepon' => 'required|regex:/^62[0-9]{8,12}$/',
-                'id_token' => 'required',
                 'level' => 'required',
                 'cabang_id' => 'required',
                 'username' => ['required', 'string', 'max:100', Rule::unique('users', 'username')->ignore($user->id)],
@@ -68,7 +67,6 @@ class MasterUserController extends Controller
             $user->update([
                 'nama' => $validated['nama'],
                 'telepon' => $validated['telepon'],
-                'id_token' => $validated['id_token'],
                 'status' => $status,
                 'level' => $validated['level'],
                 'cabang_id' => $validated['cabang_id'],
@@ -83,7 +81,7 @@ class MasterUserController extends Controller
 
         }
 
-        return back()->with('message', 'User berhasil diupdate');
+        return redirect('/master-user')->with('message', 'Data user berhasil diperbarui.');
     }
 
     public function updateCredentials(Request $request, User $user)
