@@ -25,14 +25,68 @@
                 {{ $user->nama }}</x-page-title>
         </div>
 
-        <div class="rounded-lg shadow-lg p-4">
-            <form action="/master-user/{{ $user->id }}" method="post" onsubmit="return submitUpdateConfirm()">
-                @csrf
-                @method('PATCH')
+        <form action="/master-user/{{ $user->id }}" method="post" onsubmit="return submitUpdateConfirm()">
+            @csrf
+            @method('PATCH')
+
+            <div class="rounded-lg shadow-lg p-4 mt-4 mb-4">
+                <div class="w-full flex justify-center items-center gap-2">
+                    <div class="w-full border border-[#099AA7]"></div>
+                    <p class="w-[200px] text-center font-bold uppercase text-[#099AA7]">Edit Kredensial</p>
+                    <div class="w-full border border-t border-[#099AA7]"></div>
+                </div>
+
+                <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
+                    <div>
+                        <label for="username" class="block text-xs font-medium leading-6 text-[#099AA7]">Username</label>
+                        <input value="{{ old('username', $user->username) }}" type="text" id="username" name="username" required
+                            class="block w-full rounded-md border-0 py-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6" />
+                        @error('username')
+                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-xs font-medium leading-6 text-[#099AA7]">Email</label>
+                        <input value="{{ old('email', $user->email) }}" type="email" id="email" name="email" required
+                            class="block w-full rounded-md border-0 py-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6" />
+                        @error('email')
+                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="password" class="block text-xs font-medium leading-6 text-[#099AA7]">Password</label>
+                        <input type="password" id="password" name="password"
+                            class="block w-full rounded-md border-0 py-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6" />
+                        @error('password')
+                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="password_confirmation"
+                            class="block text-xs font-medium leading-6 text-[#099AA7]">Konfirmasi Password</label>
+                        <input type="password" id="password_confirmation" name="password_confirmation"
+                            class="block w-full rounded-md border-0 py-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6" />
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <p class="text-xs text-gray-600 mt-2">
+                            Password bersifat opsional.<br>
+                            Jika password tidak diisi, maka password user tidak akan berubah.<br>
+                            Jika password diisi, maka password user akan diperbarui dan menggantikan password default.<br>
+                            Password default sebelumnya adalah: 12345678.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-lg shadow-lg p-4">
 
                 <div class="w-full flex justify-center items-center gap-2">
                     <div class="w-full border border-[#099AA7]"></div>
-                    <p class="w-[200px] text-center font-bold uppercase text-[#099AA7]">Data</p>
+                    <p class="w-[200px] text-center font-bold uppercase text-[#099AA7]">Data User</p>
                     <div class="w-full border border-t border-[#099AA7]"></div>
                 </div>
 
@@ -105,11 +159,11 @@
                         class="min-w-[120px] text-center rounded-md bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Kembali</a>
 
                     <button type="submit"
-                        class="min-w-[120px] text-center rounded-md bg-yellow-600 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-yellow-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-600">Edit
-                        User</button>
+                        class="min-w-[160px] text-center rounded-md bg-yellow-600 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-yellow-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-600">Simpan
+                        Perubahan</button>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 
     <form action="/master-user/{{ $user->id }}" method="POST" id="delete-form" hidden>

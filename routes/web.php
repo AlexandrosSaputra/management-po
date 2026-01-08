@@ -21,6 +21,7 @@ use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+// Public / Guest routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])
     ->middleware('guest')
     ->name('login');
@@ -29,11 +30,14 @@ Route::post('/login', [LoginController::class, 'login'])
     ->middleware(['guest', 'throttle:login'])
     ->name('login.attempt');
 
+// Authentication
 Route::post('/logout', [LoginController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
+// Authenticated routes
 Route::middleware(['auth'])->group(function () {
+    // Landing / utility
     Route::get('/', function () {
         if (Auth::user()->level == 'admin') {
             return redirect('/master-user');
@@ -50,7 +54,7 @@ Route::middleware(['auth'])->group(function () {
         return view('konfirmasi');
     });
 
-    // route sementara
+    // Temporary routes
     Route::get('/stok', function () {
         return abort(403, 'Fitur masih dikembangkan');
     });
@@ -80,13 +84,15 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/preorder/{preorder}', [PreOrderController::class, 'update']);
     Route::patch('/preorder/terima/{preorder}', [PreOrderController::class, 'updateTerima']);
 
-    // ItemPenawaran routes
+    // Item Penawaran routes
     Route::post('/item-penawaran/create-from-template/{templateorder}', [ItemPenawaranController::class, 'storeFromTemplate']);
     Route::post('/item-penawaran/create-from-harga/{harga}', [ItemPenawaranController::class, 'storeFromHarga']);
     Route::get('/item-penawaran', [ItemPenawaranController::class, 'index']);
+    // POTENTIAL DUPLICATE
     Route::get('/item-penawaran/delete/{itemPenawaran}', [ItemPenawaranController::class, 'destroy'])->name('item-penawaran.delete');
     Route::patch('/item-penawaran/{itemPenawaran}', [ItemPenawaranController::class, 'update']);
     Route::patch('/item-penawaran/bukti-gudang/{itemPenawaran}', [ItemPenawaranController::class, 'updateBuktiGudang']);
+    // POTENTIAL DUPLICATE
     Route::delete('/item-penawaran/delete/{itemPenawaran}', [ItemPenawaranController::class, 'destroy'])->name('item-penawaran.delete');
 
     // Order routes
@@ -120,11 +126,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pembayaran/{pembayaran}', [PembayaranController::class, 'show']);
     Route::patch('/pembayaran/{pembayaran}', [PembayaranController::class, 'update']);
 
-    // Master user routes
-    Route::get('/master-user', [MasterUserController::class, 'index']);
-    Route::get('/master-user/{user}', [MasterUserController::class, 'show']);
-    Route::patch('/master-user/{user}', [MasterUserController::class, 'update']);
-    Route::delete('/master-user/{user}', [MasterUserController::class, 'destroy']);
+    // Master user routes (admin only)
+    Route::middleware('ensure.admin')->group(function () {
+        Route::get('/master-user', [MasterUserController::class, 'index']);
+        Route::patch('/master-user/{user}/credentials', [MasterUserController::class, 'updateCredentials']);
+        Route::get('/master-user/{user}', [MasterUserController::class, 'show']);
+        Route::patch('/master-user/{user}', [MasterUserController::class, 'update']);
+        Route::delete('/master-user/{user}', [MasterUserController::class, 'destroy']);
+    });
 
     // Master Gudang routes
     Route::get('/gudang', [GudangController::class, 'index']);
@@ -168,7 +177,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/jenis', [JenisController::class, 'store']);
     Route::patch('/jenis/{jenis}', [JenisController::class, 'update']);
 
-    // Kontrak (non po) routes
+    // Kontrak (non PO) routes
     Route::get('/nonpo', [KontrakController::class, 'index']);
     Route::get('/nonpo/{kontrak}', [KontrakController::class, 'show']);
     Route::post('/nonpo/{templateorder}', [KontrakController::class, 'store']);
