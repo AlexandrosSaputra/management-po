@@ -1,11 +1,11 @@
-<nav class="fixed w-full z-20 top-0 start-0 bg-[#099AA7] border-gray-300">
-    <div class="flex flex-wrap items-center justify-between mx-auto px-4 py-1">
-        <div class="flex items-center">
+<nav class="fixed inset-x-0 top-0 z-20 bg-[#099AA7] text-white shadow-sm">
+    <div class="relative mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
+        <div class="flex items-center gap-2">
             @auth
                 <!-- drawer init and show -->
                 <div class="text-center">
                     <button
-                        class="text-white hover:text-gray-300 focus:ring-2 focus:ring-gray-300 font-medium rounded-lg p-1 md:p-2 text-sm focus:outline-none "
+                        class="inline-flex h-10 w-10 items-center justify-center rounded-md text-white/90 transition-colors duration-200 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/50"
                         type="button" data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation"
                         aria-controls="drawer-navigation">
                         <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
@@ -18,27 +18,38 @@
                 </div>
             @endauth
 
-            <a href="{{ url('/') }}"
-                class="flex gap-x-2 p-2 justify-center items-center focus:ring-2 focus:ring-gray-300 rounded-lg font-bold text-white group">
-                <img class="w-[50px] bg-white p-2 rounded-lg group-hover:bg-gray-300"
-                    src="{{ asset('images/nhlogo.png') }}" alt="Logo">
-
-                <span class="group-hover:text-gray-300">Manajemen PO</span>
-            </a>
+            @auth
+                <a href="{{ url('/') }}"
+                    class="group flex items-center gap-2 rounded-lg px-2 py-1 text-base font-semibold text-white/90 transition-colors duration-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/50">
+                    <img class="w-14 rounded-lg bg-white/95 p-1.5 shadow-sm ring-1 ring-white/30 transition-colors duration-200 group-hover:bg-white"
+                        src="{{ asset('images/nhlogo.png') }}" alt="Logo">
+                    <span class="hidden sm:inline">Manajemen PO</span>
+                </a>
+            @endauth
         </div>
 
-        <div class="flex items-center md:order-2 gap-2 rtl:space-x-reverse">
+        @guest
+            <a href="{{ url('/') }}"
+                class="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-lg px-2 py-1 text-base font-semibold text-white/90 transition-colors duration-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/50">
+                <img class="w-14 rounded-lg bg-white/95 p-1.5 shadow-sm ring-1 ring-white/30"
+                    src="{{ asset('images/nhlogo.png') }}" alt="Logo">
+                <span>Manajemen PO</span>
+            </a>
+        @endguest
+
+        <div class="flex items-center gap-2 md:order-2">
             @auth
                 <button type="button"
-                    class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 "
+                    class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/20 transition duration-200 hover:bg-white/20 hover:ring-white/40 focus:outline-none focus:ring-2 focus:ring-white/60"
                     id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown"
                     data-dropdown-placement="bottom">
                     <span class="sr-only">Open user menu</span>
-                    <img class="w-8 h-8 rounded-full" src="{{ asset('images/person.jpg') }}" alt="user photo">
+                    <img class="h-8 w-8 rounded-full object-cover" src="{{ asset('images/person.jpg') }}"
+                        alt="user photo">
                 </button>
 
                 <!-- Dropdown menu -->
-                <div class="min-w-[200px] z-50 hidden my-4 text-base list-none bg-gray-100 divide-y divide-gray-300 rounded-lg shadow"
+                <div class="min-w-[200px] z-50 hidden my-4 text-base list-none rounded-xl bg-white shadow-lg ring-1 ring-black/5"
                     id="user-dropdown">
                     <div class="px-4 py-3">
                         <span
@@ -51,7 +62,7 @@
                         <li>
                             <form action="{{ route('logout') }}" id="logout" method="POST" class="w-full">@csrf
                                 <button type="submit"
-                                    class="w-full text-start block px-4 py-2 text-sm text-gray-700 hover:bg-gray-300">Sign
+                                    class="block w-full px-4 py-2 text-start text-sm font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-100">Sign
                                     out</button>
                             </form>
                         </li>
@@ -61,44 +72,37 @@
 
             @auth
                 <button data-collapse-toggle="navbar-user" type="button"
-                    class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg md:hidden focus:outline-none focus:ring-2 focus:ring-gray-300"
+                    class="inline-flex h-10 w-10 items-center justify-center rounded-md text-white/90 transition-colors duration-200 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/50 md:hidden"
                     aria-controls="navbar-user" aria-expanded="false">
                     <span class="sr-only">Open main menu</span>
                     <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                         fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14" />
                     </svg>
-
                 </button>
-
             @endauth
         </div>
 
         @auth
-            <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-user">
-                <ul class="flex flex-col md:flex-row font-medium px-4 py-2 rounded-lg rtl:space-x-reverse">
-                    {{-- <li>
-                        <button id="dropdown-inventaris-button" data-dropdown-toggle="dropdown-inventaris"
-                            class="block py-1 px-2 text-left hover:text-gray-300 rounded-md {{ request()->segment(1) == 'inventaris' ? 'bg-white md:bg-transparent text-[#099AA7] md:text-gray-300' : 'text-white' }}"
-                            aria-current="page">Stok</button>
-                    </li> --}}
+            <div class="hidden w-full items-center justify-between md:order-1 md:flex md:w-auto" id="navbar-user">
+                <ul class="flex flex-col gap-1 font-medium md:flex-row md:items-center md:gap-2">
                     <li>
                         <a href="/nonpo"
-                            class="block py-1 px-2 hover:text-gray-300 rounded-md {{ request()->segment(1) == 'nonpo' ? 'bg-white md:bg-transparent text-[#099AA7] md:text-gray-300' : 'text-white' }}">Non
+                            class="block rounded-md px-3 py-1.5 text-sm font-semibold transition-colors duration-200 hover:bg-white/10 hover:text-white {{ request()->segment(1) == 'nonpo' ? 'bg-white text-[#099AA7] md:bg-white/15 md:text-white' : 'text-white/80' }}">Non
                             PO</a>
                     </li>
                     <li>
                         <a href="/preorder"
-                            class="block py-1 px-2 hover:text-gray-300 rounded-md {{ request()->segment(1) == 'preorder' ? 'bg-white md:bg-transparent text-[#099AA7] md:text-gray-300' : 'text-white' }}">Pre
+                            class="block rounded-md px-3 py-1.5 text-sm font-semibold transition-colors duration-200 hover:bg-white/10 hover:text-white {{ request()->segment(1) == 'preorder' ? 'bg-white text-[#099AA7] md:bg-white/15 md:text-white' : 'text-white/80' }}">Pre
                             Order</a>
                     </li>
                     <li>
                         <a href="/order"
-                            class="block py-1 px-2 hover:text-gray-300 rounded-md {{ request()->segment(1) == 'order' ? 'bg-white md:bg-transparent text-[#099AA7] md:text-gray-300' : 'text-white' }}">Order</a>
+                            class="block rounded-md px-3 py-1.5 text-sm font-semibold transition-colors duration-200 hover:bg-white/10 hover:text-white {{ request()->segment(1) == 'order' ? 'bg-white text-[#099AA7] md:bg-white/15 md:text-white' : 'text-white/80' }}">Order</a>
                     </li>
                     <li>
                         <a href="/pembayaran"
-                            class="block py-1 px-2 hover:text-gray-300 rounded-md {{ request()->segment(1) == 'pembayaran' ? 'bg-white md:bg-transparent text-[#099AA7] md:text-gray-300' : 'text-white' }}">Pembayaran</a>
+                            class="block rounded-md px-3 py-1.5 text-sm font-semibold transition-colors duration-200 hover:bg-white/10 hover:text-white {{ request()->segment(1) == 'pembayaran' ? 'bg-white text-[#099AA7] md:bg-white/15 md:text-white' : 'text-white/80' }}">Pembayaran</a>
                     </li>
                 </ul>
             </div>

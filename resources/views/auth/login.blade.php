@@ -1,5 +1,5 @@
 <x-layout>
-    <div class="min-h-[calc(100vh-64px)] flex items-center justify-center px-4">
+    <div class="min-h-[calc(100vh-64px)] pb-20 flex items-center justify-center px-4">
         <div class="w-full max-w-md rounded-lg bg-white p-8 shadow">
             <h1 class="text-center text-xl font-bold text-gray-900">Login</h1>
 
@@ -26,13 +26,6 @@
                     @error('password')
                         <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
                     @enderror
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" name="remember" id="remember" value="1"
-                        class="h-4 w-4 rounded border-gray-300 text-[#099AA7] focus:ring-[#099AA7]"
-                        {{ old('remember') ? 'checked' : '' }}>
-                    <label for="remember" class="text-sm text-gray-700">Ingat saya</label>
                 </div>
 
                 <button type="submit"
