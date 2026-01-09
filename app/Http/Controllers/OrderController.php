@@ -2,17 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AnggaranDana;
-use App\Models\AnggaranDetilDana;
 use App\Models\Cabang;
-use App\Models\CabangDana;
-use App\Models\DivisiProjectDana;
 use App\Models\Gudang;
 use App\Models\Harga;
 use App\Models\Item;
 use App\Models\ItemPenawaran;
 use App\Models\Jenis;
-use App\Models\JudulDana;
 use App\Models\Kontrak;
 use App\Models\Order;
 use App\Models\PreOrder;
@@ -239,18 +234,11 @@ class OrderController extends Controller
                 $itemPenawarans = ItemPenawaran::where('order_id', $order->id)->get();
             }
 
-            $cabangsDana = CabangDana::all();
-            $divisisDana = DivisiProjectDana::all();
-            $judulsDana = JudulDana::where('status', 1)->get();
-
             $variables = [
                 'order' => $order,
                 'gudangs' => Gudang::all(),
                 'jenises' => Jenis::all(),
                 'itemPenawarans' => $itemPenawarans,
-                'cabangsDana' => $cabangsDana,
-                'divisisDana' => $divisisDana,
-                'judulsDana' => $judulsDana,
             ];
 
             if (Auth::user()->level == 'admin') {
@@ -1687,8 +1675,6 @@ class OrderController extends Controller
             return abort(403, "Anda Tidak Memiliki Hak Akses!");
         }
 
-        $isDanaCheck = request()->dana_check;
-
         request()->validate([
             'nominaldp' => 'required',
         ]);
@@ -1698,17 +1684,7 @@ class OrderController extends Controller
             return back()->with('errorMessage', 'Nominal DP lebih besar dari total biaya!');
         }
 
-        if ($isDanaCheck) {
-            request()->validate([
-                'cabang' => 'required',
-                'project' => 'required',
-                'judul' => 'required',
-            ]);
-
-            $success = $this->inputPendanaan($order, request()->judul, request()->project, request()->cabang, request()->nominaldp);
-        } else {
-            $success = true;
-        }
+        $success = true;
 
         if ($success) {
             # code...
@@ -1743,201 +1719,6 @@ class OrderController extends Controller
             return back()->with('errorMessage', 'Update DP Gagal!');
         }
 
-        return back()->with('message', 'Data order DP terkirim ke aplikasi dana');
-    }
-
-    public function inputPendanaan(Order $order, $judul, $project, $cabang, $nominaldp)
-    {
-        date_default_timezone_set('Asia/Jakarta');
-        $host    =  "192.168.1.7";
-        $dbuser  =  "postgres";
-        $dbpass  =  "almukmin";
-        $port    =  "5432";
-        $dbname  =  "nurul_hayat_new";
-
-        $conn = pg_connect("host='$host' port='$port' dbname='$dbname' user='$dbuser' password='$dbpass'");
-
-        if (!$conn) {
-            die("Koneksi gagal: " . pg_last_error());
-        }
-
-        // Fungsi untuk membersihkan input dari serangan injeksi SQL
-        function anti_injection($input)
-        {
-            global $conn;
-            $clean_input = pg_escape_string($conn, $input);
-            return $clean_input;
-        }
-
-        $kegiatanWithBidang = JudulDana::where('id_keg', $judul)
-            ->with('bidang')
-            ->get()
-            ->map(function ($kegiatan) {
-                return [
-                    ...$kegiatan->toArray(),
-                    'nik_pj' => $kegiatan->bidang->nik_pj ?? null,
-                ];
-            });
-
-        $userDana = UserToken::where('id_tkn', Auth::user()->id_token)->first();
-
-        $grand = $nominaldp;
-
-        if ($userDana->id_cabang != 1) {
-            $id_ats = JudulDana::where('id_keg', $judul)->first()->create_nik;
-        } else {
-            $id_ats = UserToken::where('nik', $userDana->nik)->first()->nik_pimp;
-        }
-        $nik_ats = $id_ats;
-        $nik_keu = '201212015';
-        $nik_bid = $kegiatanWithBidang[0]['bidang']['nik_pj'];
-        if ($grand >= 3000000) {
-            $ck_ats = '1';
-            $ck_bid = '1';
-        } else {
-            $ck_ats = '0';
-            $ck_bid = '0';
-        }
-
-        $timestamp = now()->format('Y-m-d h:i:s');
-        $id_bid = $kegiatanWithBidang[0]['id_bid'];
-        $project = $project;
-        $judul = $judul;
-        $cabang = $cabang;
-
-        $id_ang = AnggaranDana::selectRaw('COALESCE(MAX(id_ang), 0) as max_id_ang')->value('max_id_ang');
-        $id_a_next = $id_ang + 1;
-
-        try {
-            //code...
-
-            // direct postgresql syntax
-            $insert_anggaran = "INSERT INTO dana.anggaran (id_ang,jenis, id_pro, id_bid, id_keg, status, create_nik, create_date, oto1_status, oto1_nik,oto2_status, oto2_nik, oto3_status, oto3_nik,id_jurnal,ang_cab,cek_pro,cek_bid) VALUES ('$id_a_next','Rutin','$project','$id_bid','$judul','0','$userDana->nik','$timestamp','0','$nik_ats','0','$nik_bid','0','$nik_keu','0','$cabang','$ck_ats','$ck_bid')";
-            $res_angg = pg_query($conn, $insert_anggaran);
-
-            if (!$res_angg) {
-                # code...
-                return false;
-            }
-        } catch (\Throwable $th) {
-            //throw $th;
-            return back()->with('errorMessage', 'Gagal Membuat Data Anggaran Dana ' . $th);
-        }
-
-        try {
-            //code...
-            $uraian = $order->kode . ' | ' . (!$order->dp_1 ? 'DP 1' : (!$order->dp_2 ? 'DP 2' : '')) . ' | Suplier: ' . $order->suplier->nama . ' | Gudang: ' . $order->gudang->nama . ' | Admin: ' . $order->user->nama . ' | Tanggal PO: ' . Carbon::parse($order->periode_tgl)->format('d/m/Y');
-            $jumlah = 1;
-            $nominal = floatval($nominaldp);
-            $total = floatval($nominaldp) * $jumlah;
-
-            // direct postgresql syntax
-            $insert_rincian = "INSERT INTO dana.anggaran_detil (id_ang, uraian, jumlah, nominal, total, status) VALUES ('$id_a_next', '$uraian', '$jumlah', '$nominal', '$total', '1')";
-            $res_angg_rinc = pg_query($conn, $insert_rincian);
-
-            if (!$res_angg_rinc) {
-                # code...
-                return false;
-            }
-        } catch (\Throwable $th) {
-            //throw $th;
-            return back()->with('errorMessage', 'Gagal Membuat Data Detail Anggaran Dana ' . $th);
-        }
-
-        // Membebaskan memori hasil query
-        pg_free_result($res_angg);
-        pg_free_result($res_angg_rinc);
-
-        // Menutup koneksi ke database
-        pg_close($conn);
-
-        $anggaranDanaData = AnggaranDetilDana::where('id_ang', $id_a_next)->first();
-
-        if ($anggaranDanaData) {
-            # code...
-            $uraianAnggaranDanaData = $anggaranDanaData->uraian;
-            $kodeOrder = explode(' | ', $uraianAnggaranDanaData)[0];
-
-            $dataOrder = Order::where('kode', $kodeOrder)->first();
-
-            if ($dataOrder) {
-                if (!$order->dp_1) {
-                    # code...
-                    $order->update([
-                        'jurnal_id_dp_1' => $id_a_next,
-                    ]);
-                } elseif ($order->dp_1 && !$order->dp_2) {
-                    $order->update([
-                        'jurnal_id_dp_2' => $id_a_next,
-                    ]);
-                }
-
-                return true;
-            } else {
-                if (!$order->dp_1) {
-                    # code...
-                    $order->update([
-                        'dp_1' => null,
-                    ]);
-                } elseif ($order->dp_1 && !$order->dp_2) {
-                    $order->update([
-                        'dp_2' => null,
-                    ]);
-                }
-
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    public function grabSpreadsheetKPI()
-    {
-        $cabang_id = request()->cbg;
-        $order_id = request()->ordr;
-
-        $gudangs = Gudang::where('cabang_id', $cabang_id)->get();
-
-        if ($gudangs->isEmpty()) {
-            # code...
-            return response()->json([
-                'message' => 'Data gudang tidak tersedia!',
-                'request' => request()->all()
-            ], 400);
-        }
-
-        $orders = Order::with(['gudang.cabang', 'suplier', 'user'])->whereIn('gudang_id', $gudangs->pluck('id'))
-            ->whereIn('status', ['diterima',  'revisiditerima'])
-            ->when($order_id, function ($q) use ($order_id) {
-                return $q->where('id', '>', $order_id);
-            })
-            ->get();
-
-        $data = [];
-        foreach ($orders as $order) {
-            # code...
-            $data[] = [
-                'order_id' => $order->id,
-                'admin' => $order->user->nama,
-                'cabang' => $order->gudang->cabang->nama,
-                'gudang' => $order->gudang->nama,
-                'suplier' => $order->suplier->nama,
-                'created_at' => Carbon::parse($order->created_at)->format('d-m-Y'),
-                'target_kirim' => Carbon::parse($order->target_kirim)->format('d-m-Y'),
-                'tgl_selesai' => $order->tgl_selesai ? Carbon::parse($order->tgl_selesai)->format('d-m-Y') : null,
-                'status' =>  $order->tgl_selesai ? (Carbon::parse($order->tgl_selesai)->gt(Carbon::parse($order->target_kirim)) ? 'TERLAMBAT' : 'TEPAT WAKTU') : null,
-            ];
-        }
-
-        // return response()->json([
-        //     'message' => 'Sukses',
-        //     'requset' => request()->all(),
-        //     'date' => today()->format('d-m-Y'),
-        //     'data_count' => count($data),
-        //     'data' => $data,
-        // ]);
-
-        return response()->json($data);
+        return back();
     }
 }

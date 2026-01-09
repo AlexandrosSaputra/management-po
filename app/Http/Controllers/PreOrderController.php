@@ -507,27 +507,7 @@ class PreOrderController extends Controller
             'success' => 'Semua notifikasi terkirim',
         ], 200);
     }
-	/*
-    public function kirimWA(PreOrder $preorder, string $pesan)
-    {
-        $hp = $preorder->suplier->telepon;
-        $baseUrl = "https://app.wapakrt.my.id/send-message";
-        $params = array(
-            'api_key' => 'AQFhKB2s01TxBsHoT5v3pvBS9X78VeOu',
-            'sender' => '6289503314976',
-            'number' => $hp,
-            'message' => $pesan
-        );
 
-        $url = $baseUrl . '?' . http_build_query($params);
-
-        try {
-            $response = file_get_contents($url);
-        } catch (\Throwable $th) {
-            return abort(403, 'API WA Error, Coba Lagi');
-        }
-    }
-	*/
 	public function kirimWA(PreOrder $preorder, string $pesan)
     {
         $hp = $preorder->suplier->telepon;

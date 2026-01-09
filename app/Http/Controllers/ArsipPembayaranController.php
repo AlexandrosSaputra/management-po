@@ -185,11 +185,6 @@ class ArsipPembayaranController extends Controller
 
     public function store(Pembayaran $pembayaran)
     {
-        if (!$pembayaran->anggaran_dana_id) {
-            # code...
-            return back()->with('errorMessage', 'Data Pembayaran Ini Belum Masuk Aplikasi Dana, Harap Post Data Ulang');
-        }
-
         if (($pembayaran->kasir_id != Auth::user()->id) && (Auth::user()->level != 'admin')) {
             # code...
             return back()->with('errorMessage', 'Anda bukan kasir yang dituju dan bukan Super Admin!');

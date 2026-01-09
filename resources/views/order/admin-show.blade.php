@@ -768,49 +768,6 @@
                             </div>
 
                             <div class="grid gap-4 mb-4">
-                                <div id="input-cabang-dana">
-                                    <label for="cabangDana"
-                                        class="block mb-2 text-sm font-medium text-[#099AA7]">Cabang</label>
-                                    <select id="cabangDana" name="cabang" style="width:100%" required
-                                        class="form-select select2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
-
-                                        <option value=""></option>
-                                        @foreach ($cabangsDana as $cabangDana)
-                                            <option value="{{ $cabangDana->id_cabang }}">{{ $cabangDana->cabang }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div id="input-divisi-dana">
-                                    <label for="divisiDana"
-                                        class="block mb-2 text-sm font-medium text-[#099AA7]">Divisi</label>
-                                    <select id="divisiDana" name="project" style="width:100%" required
-                                        class="form-select select2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
-
-                                        <option value=""></option>
-                                        @foreach ($divisisDana as $divisiDana)
-                                            <option value="{{ $divisiDana->program_pusat_id }}">
-                                                {{ $divisiDana->nama }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div id="input-judul-dana">
-                                    <label for="judulDana"
-                                        class="block mb-2 text-sm font-medium text-[#099AA7]">Judul</label>
-                                    <select id="judulDana" name="judul" style="width:100%" required
-                                        class="form-select select2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
-
-                                        <option value=""></option>
-                                        @foreach ($judulsDana as $judulDana)
-                                            <option value="{{ $judulDana->id_keg }}">{{ $judulDana->kegiatan }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
                                 <div class="w-full">
                                     <label for="nominaldp"
                                         class="block text-xs font-medium leading-6 text-[#099AA7]">Nominal DP <span

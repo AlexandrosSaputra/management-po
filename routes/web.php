@@ -104,7 +104,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/order/kirimSuplier/{order}', [OrderController::class, 'kirimSuplier']);
     Route::get('/order/notif-suplier', [OrderController::class, 'notifSuplier']);
     Route::get('/order/notif-gudang', [OrderController::class, 'notifGudang']);
-    Route::get('/order/grab-spreadsheet', [OrderController::class, 'grabSpreadsheetKPI']);
     Route::get('/order/{order}', [OrderController::class, 'show']);
     Route::get('/order/kirimWAGudang/{order}', [OrderController::class, 'kirimWAGudang']);
     Route::get('/order/kirimWASuplier/{order}', [OrderController::class, 'kirimWASuplier']);

@@ -137,54 +137,6 @@
                                     value="{{ $periode_akhir }}">
                             </div>
 
-                            <div class="w-full">
-                                <label for="cabangDana"
-                                    class="block text-xs font-medium leading-6 text-[#099AA7]">Pilih
-                                    Cabang <span class="text-xs font-semibold italic text-yellow-500">*wajib pilih
-                                        Cabang</span></label>
-                                <select id="cabangDana" name="cabang" style="width:100%" required
-                                    class="form-select select2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
-
-                                    <option value=""></option>
-                                    @foreach ($cabangsDana as $cabangDana)
-                                        <option value="{{ $cabangDana->id_cabang }}">{{ $cabangDana->cabang }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="w-full">
-                                <label for="divisiDana"
-                                    class="block text-xs font-medium leading-6 text-[#099AA7]">Pilih
-                                    Divisi <span class="text-xs font-semibold italic text-yellow-500">*wajib pilih
-                                        Divisi</span></label>
-                                <select id="divisiDana" name="divisi" style="width:100%" required
-                                    class="form-select select2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
-
-                                    <option value=""></option>
-                                    @foreach ($divisisDana as $divisiDana)
-                                        <option value="{{ $divisiDana->program_pusat_id }}">{{ $divisiDana->nama }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="w-full">
-                                <label for="judulDana"
-                                    class="block text-xs font-medium leading-6 text-[#099AA7]">Pilih
-                                    Judul <span class="text-xs font-semibold italic text-yellow-500">*wajib pilih
-                                        Judul</span></label>
-                                <select id="judulDana" name="judul" style="width:100%" required
-                                    class="form-select select2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
-
-                                    <option value=""></option>
-                                    @foreach ($judulsDana as $judulDana)
-                                        <option value="{{ $judulDana->id_keg }}">{{ $judulDana->kegiatan }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
                             <div>
                                 <label for="foto"
                                     class="block text-xs font-medium leading-6 text-[#099AA7]">Upload
