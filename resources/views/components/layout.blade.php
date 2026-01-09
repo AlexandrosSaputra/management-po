@@ -141,7 +141,11 @@
     </style>
 </head>
 
-<body class="h-80 bg-white overflow-hidden">
+@php
+    $isNoScrollPage = request()->routeIs('login');
+@endphp
+
+<body class="min-h-screen bg-white {{ $isNoScrollPage ? 'overflow-hidden' : '' }}">
     @auth
         @include('components.sidebar')
     @endauth
