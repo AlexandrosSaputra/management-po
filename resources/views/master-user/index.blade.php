@@ -8,7 +8,7 @@
     <div>
         <x-page-title>List User</x-page-title>
 
-        <form action="/master-user" method="GET" class="my-6 flex flex-col md:flex-row gap-4"
+        <form action="/master-user" method="GET" class="my-6 flex flex-col md:flex-row gap-4 md:items-end"
             onsubmit="showLoadingModal()">
             @csrf
             @method('GET')
@@ -27,6 +27,11 @@
                     value="{{ $filterNama }}"
                     class=" block w-full md:min-w-[200px] rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6" />
             </div>
+
+            @if (Auth::user()->level == 'admin')
+                <a href="/master-user/create"
+                    class="min-w-[120px] text-center rounded-md bg-[#099AA7] ms-auto px-3 py-3 text-xs font-semibold text-white shadow-sm hover:bg-[#099AA7]/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#099AA7]">+ Tambah User</a>
+            @endif
         </form>
 
         <div class="relative overflow-x-auto shadow-lg rounded-md sm:rounded-lg">

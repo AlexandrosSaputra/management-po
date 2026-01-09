@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class MasterUserController extends Controller
@@ -47,6 +49,55 @@ class MasterUserController extends Controller
         $cabangs = Cabang::all();
 
         return view('master-user.show', ['user' => $user, 'cabangs' => $cabangs]);
+    }
+
+    public function create()
+    {
+        if (!Auth::user()->status) {
+            return abort(403, 'User disabled!, hubungi admin untuk akses');
+        }
+
+        $cabangs = Cabang::all();
+
+        return view('master-user.create', ['cabangs' => $cabangs]);
+    }
+
+    public function store(Request $request)
+    {
+        if (!Auth::user()->status) {
+            return abort(403, 'User disabled!, hubungi admin untuk akses');
+        }
+
+        $status = filter_var($request->input('status'), FILTER_VALIDATE_BOOLEAN);
+
+        $validated = $request->validate([
+            'nama' => 'required|string',
+            'telepon' => 'required|regex:/^62[0-9]{8,12}$/',
+            'level' => 'required',
+            'cabang_id' => 'required',
+            'username' => ['required', 'string', 'max:100', Rule::unique('users', 'username')],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $data = [
+            'nama' => $validated['nama'],
+            'telepon' => $validated['telepon'],
+            'status' => $status,
+            'level' => $validated['level'],
+            'cabang_id' => $validated['cabang_id'],
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+        ];
+
+        if (Schema::hasColumn('users', 'id_token')) {
+            $data['id_token'] = Str::random(32);
+        }
+
+        User::create($data);
+
+        return redirect('/master-user')->with('message', 'User berhasil dibuat');
     }
 
     public function update(Request $request, User $user)

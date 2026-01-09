@@ -129,6 +129,8 @@ Route::middleware(['auth'])->group(function () {
     // Master user routes (admin only)
     Route::middleware('ensure.admin')->group(function () {
         Route::get('/master-user', [MasterUserController::class, 'index']);
+        Route::get('/master-user/create', [MasterUserController::class, 'create']);
+        Route::post('/master-user', [MasterUserController::class, 'store']);
         Route::patch('/master-user/{user}/credentials', [MasterUserController::class, 'updateCredentials']);
         Route::get('/master-user/{user}', [MasterUserController::class, 'show']);
         Route::patch('/master-user/{user}', [MasterUserController::class, 'update']);
