@@ -141,7 +141,7 @@
     </style>
 </head>
 
-<body class="h-80 bg-white">
+<body class="h-80 bg-white overflow-hidden">
     @auth
         @include('components.sidebar')
     @endauth
